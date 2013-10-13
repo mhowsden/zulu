@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, g, flash, redirect, url_for
 from sqlite3 import dbapi2 as sqlite3
+from urlparse import urlparse
 
 app = Flask(__name__)
 
@@ -49,11 +50,15 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    db = get_db()
-    db.execute('insert into entries (title, url, artist) values (?, ?, ?)',
-                 [request.form['title'], request.form['url'], request.form['artist']])
-    db.commit()
-    #flash('New entry was successfully posted')
+    # validating the url is from youtube before allowing anything to be submitted
+    if request.form.has_key('url'):
+        url = urlparse(request.form['url'])
+        if url.hostname == 'www.youtube.com':
+            db = get_db()
+            db.execute('insert into entries (title, url, artist) values (?, ?, ?)',
+                       [request.form['title'], request.form['url'], request.form['artist']])
+            db.commit()
+        #flash('New entry was successfully posted')
     return redirect(url_for('index'))
 
 
