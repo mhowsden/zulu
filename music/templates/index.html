@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <dl>
+        <dt>Title:
+        <dd><input type="text" size="30" name="title" />
+        <dd><input type="text" size="30" name="artist" />
+        <dt>URL:
+        <dd><input type="text" name="url" size="80" />
+        <dd><input type="submit" value="Share" />
+      </dl>
+    </form>
+  <ul class=entries>
+  {% for entry in entries %}
+    <li><a href="{{ entry.url }}">{{ entry.title }}</a></li>
+  {% else %}
+    <li><em></em></li>
+  {% endfor %}
+  </ul>
+  </body>
+</html>
