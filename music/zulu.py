@@ -1,3 +1,5 @@
+import time
+from datetime import datetime
 from flask import Flask, render_template, request, g, flash, redirect, url_for
 from sqlite3 import dbapi2 as sqlite3
 from urlparse import urlparse
@@ -40,8 +42,13 @@ def derive_embedcode(url):
         embed_code = '<iframe width="560" height="315" src="//www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>' % youtube_id
     else:
         embed_code = None
-
     return embed_code
+
+def format_timestamp(sqlite_date):
+    if sqlite_date:
+        return datetime.fromtimestamp(int(sqlite_date))
+    else:
+        return ""
 
 @app.teardown_appcontext
 def close_db(error):
@@ -54,12 +61,19 @@ def index():
     # query the database for all entries
     # get all entries descending by creation date
     db = get_db()
-    cur = db.execute('select title, artist, url from entries order by id desc')
+    try:
+        cur = db.execute('select * from entries order by id desc')
+    except sqlite3.OperationalError:
+        # this should only happen the first time the db is used
+        init_db()
+        cur = db.execute('select * from entries order by id desc')
     db_entries = cur.fetchall()
+
     entries = []
     for e in db_entries:
         de = dict(e)
         de['embed_code'] = derive_embedcode(e['url'])
+        de['created_at'] = format_timestamp(e['created_at'])
         entries.append(de)
     return render_template("index.html", entries=entries)
 
@@ -70,8 +84,8 @@ def add_entry():
         url = urlparse(request.form['url'])
         if url.hostname == 'www.youtube.com':
             db = get_db()
-            db.execute('insert into entries (title, url, artist) values (?, ?, ?)',
-                       [request.form['title'], request.form['url'], request.form['artist']])
+            db.execute('INSERT INTO entries (title, url, artist, created_at) VALUES (?, ?, ?, ?)',
+                       [request.form['title'], request.form['url'], request.form['artist'], time.time()])
             db.commit()
         #flash('New entry was successfully posted')
     return redirect(url_for('index'))

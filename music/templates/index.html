@@ -69,6 +69,7 @@ a:hover{
         <a href="{{ entry.url }}">{{ entry.title }}</a> {{ entry.artist }}
       </div>
       {{ entry.embed_code|safe }}
+      {{ entry.created_at }}
     </li>
   {% else %}
     <li><em></em></li>
