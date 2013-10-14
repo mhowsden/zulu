@@ -33,6 +33,16 @@ def get_db():
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
+def derive_embedcode(url):
+    parsed = urlparse(url)
+    if parsed.query:
+        youtube_id = parsed.query.split('=')[1]
+        embed_code = '<iframe width="560" height="315" src="//www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>' % youtube_id
+    else:
+        embed_code = None
+
+    return embed_code
+
 @app.teardown_appcontext
 def close_db(error):
     """Closes the database again at the end of the request."""
@@ -44,8 +54,13 @@ def index():
     # query the database for all entries
     # get all entries descending by creation date
     db = get_db()
-    cur = db.execute('select title, url from entries order by id desc')
-    entries = cur.fetchall()
+    cur = db.execute('select title, artist, url from entries order by id desc')
+    db_entries = cur.fetchall()
+    entries = []
+    for e in db_entries:
+        de = dict(e)
+        de['embed_code'] = derive_embedcode(e['url'])
+        entries.append(de)
     return render_template("index.html", entries=entries)
 
 @app.route('/add', methods=['POST'])

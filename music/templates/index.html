@@ -4,6 +4,21 @@
     <style type="text/css">
 body{
   background-color: #CCC;
+  font-family: Ubuntu, Verdana;
+}
+ul{
+  width: 600px;
+}
+li{
+  list-style-type: none;
+  padding-bottom: 10px;
+}
+a{
+  text-decoration: none;
+  color: #262742;
+}
+a:hover{
+  text-decoration: underline;
 }
 
 #add-form {
@@ -14,7 +29,6 @@ body{
   background-color: #262742;
   color: #FFF;
   padding: 15px;
-  font-family: Ubuntu, Verdana;
 }
 
 #add-form span{
@@ -50,7 +64,12 @@ body{
     </div>
   <ul class="entries">
   {% for entry in entries %}
-    <li><a href="{{ entry.url }}">{{ entry.title }}</a></li>
+    <li>
+      <div style="margin-bottom: 5px;">
+        <a href="{{ entry.url }}">{{ entry.title }}</a> {{ entry.artist }}
+      </div>
+      {{ entry.embed_code|safe }}
+    </li>
   {% else %}
     <li><em></em></li>
   {% endfor %}
