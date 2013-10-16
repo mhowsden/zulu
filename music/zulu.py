@@ -8,8 +8,7 @@ app = Flask(__name__)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
-    DATABASE='/tmp/zulu.db',
-    DEBUG=True
+    DATABASE='/tmp/zulu.db'
 ))
 app.config.from_envvar('ZULU_SETTINGS', silent=True)
 
