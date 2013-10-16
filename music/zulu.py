@@ -80,9 +80,14 @@ def index():
 def add_entry():
     # validating the url is from youtube before allowing anything to be submitted
     if request.form.has_key('url'):
+        db = get_db()
+        # check to see if the url has been posted yet
+        cur = db.execute('SELECT * FROM entries WHERE url = ?', [request.form['url']])
+        db_entries = cur.fetchall()
+        if len(db_entries) > 0:
+            return redirect(url_for('index'))
         url = urlparse(request.form['url'])
         if url.hostname == 'www.youtube.com':
-            db = get_db()
             db.execute('INSERT INTO entries (title, url, artist, created_at) VALUES (?, ?, ?, ?)',
                        [request.form['title'], request.form['url'], request.form['artist'], time.time()])
             db.commit()
