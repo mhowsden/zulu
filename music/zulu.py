@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 from flask import Flask, render_template, request, g, flash, redirect, url_for
 from sqlite3 import dbapi2 as sqlite3
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 
 app = Flask(__name__)
 
@@ -36,8 +36,9 @@ def get_db():
 
 def derive_embedcode(url):
     parsed = urlparse(url)
-    if parsed.query:
-        youtube_id = parsed.query.split('=')[1]
+    query_dict = parse_qs(parsed.query)
+    if 'v' in query_dict:
+        youtube_id = query_dict['v'][0]
         embed_code = '<iframe width="560" height="315" src="//www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>' % youtube_id
     else:
         embed_code = None
