@@ -4,5 +4,6 @@ create table entries (
   title text not null,
   artist text not null,
   url text not null,
-  created_at integer
+  created_at integer,
+  genre text
 );

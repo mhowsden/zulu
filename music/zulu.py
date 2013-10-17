@@ -91,8 +91,10 @@ def add_entry():
             return redirect(url_for('index'))
         url = urlparse(request.form['url'])
         if url.hostname == 'www.youtube.com':
-            db.execute('INSERT INTO entries (title, url, artist, created_at) VALUES (?, ?, ?, ?)',
-                       [request.form['title'], request.form['url'], request.form['artist'], time.time()])
+            db.execute(
+                'INSERT INTO entries (title, url, artist, created_at, genre) VALUES (?, ?, ?, ?, ?)',
+                [request.form['title'], request.form['url'], 
+                 request.form['artist'], time.time(), request.form['genre']])
             db.commit()
         #flash('New entry was successfully posted')
     return redirect(url_for('index'))

@@ -47,31 +47,39 @@ a:hover{
   <body>
     <div id="add-form">
     <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
-        <div style="padding-bottom: 10px; width: 180px; float: right;">
-          <span>Artist</span>
-          <input style="width: 155px;" tabindex="2" type="text" name="artist" />
-        </div>
+      <div style="width: 180px; float: right;">
+        <span>Artist</span>
+        <input style="width: 155px;" tabindex="3" type="text" name="artist" />
+      </div>
         <div style="padding-bottom: 10px; width: 180px;">
           <span>Title</span>
           <input style="width: 155px;" tabindex="1" type="text" name="title" />
         </div>
+      <div style="position: absolute; top: 15px; left: 185px;">
+        <span>Genre</span>
+	<SELECT style="display: block;" tabindex="2" NAME="genre">
+	  <OPTION>Hip Hop</OPTION>
+	  <OPTION>Funk</OPTION>
+	  <OPTION>Other</OPTION>
+	</SELECT>
+      </div>
         <div style="margin-top: 5px; padding-right: 0px;">
           <span>URL</span><br />
-          <input style="width: 425px;" tabindex="3" type="text" name="url" />
+          <input style="width: 425px;" tabindex="4" type="text" name="url" />
         </div>
         <div style="float: right; padding-top: 10px;">
-          <input tabindex="4" type="submit" value="Add" />
+          <input tabindex="5" type="submit" value="Add" />
         </div>
     </form>
     </div>
   <ul class="entries">
   {% for entry in entries %}
     <li>
-      <div style="margin-bottom: 5px;">
+      <div style="margin-bottom: 5px; width: 560px;">
+        <div style="float: right; color #666; font-size: 12px;">posted {{ entry.created_at }}</div>
         <a href="{{ entry.url }}">{{ entry.title }}</a> {{ entry.artist }}
       </div>
       {{ entry.embed_code|safe }}
-      {{ entry.created_at }}
     </li>
   {% else %}
     <li><em></em></li>
