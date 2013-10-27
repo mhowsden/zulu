@@ -113,7 +113,13 @@ def add_entry():
                     db.commit()
             else:
                 # user can only add existing tags
-                pass
+                cur = db.execute('SELECT DISTINCT name FROM tags')
+                current_tags = [t[0] for t in cur.fetchall()]
+                for tag_name in request.form['tags'].split(','):
+                    if tag_name in current_tags:
+                        db.execute('INSERT INTO tags (name, entry_id) VALUES (?, ?)',
+                                   [tag_name, entry_id])
+                        db.commit()
         #flash('New entry was successfully posted')
 
     return redirect(url_for('index'))
