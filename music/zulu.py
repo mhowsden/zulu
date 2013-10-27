@@ -104,8 +104,12 @@ def add_entry():
                  request.form['artist'], time.time(), request.form['genre']])
             db.commit()
             entry_id = cur.lastrowid
-            # adding tagging to the entry
-            if request.remote_addr in app.config['ALLOWED_IPS']:
+            # adding tagging to the entry, using crappy ip based validation
+            if not request.headers.getlist("X-Real-IP"):
+                ip = request.remote_addr
+            else:
+                ip = request.headers.getlist("X-Real-IP")[0]
+            if ip in app.config['ALLOWED_IPS']:
                 # user can add new tags
                 for tag_name in request.form['tags'].split(','):
                     db.execute('INSERT INTO tags (name, entry_id) VALUES (?, ?)',
