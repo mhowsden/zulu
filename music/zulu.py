@@ -39,7 +39,7 @@ def derive_embedcode(url):
     query_dict = parse_qs(parsed.query)
     if 'v' in query_dict:
         youtube_id = query_dict['v'][0]
-        embed_code = """<iframe width="560" height="315" 
+        embed_code = """<iframe width="560" height="315"
         data-src="//www.youtube.com/embed/%s" frameborder="0"
          allowfullscreen></iframe>"""
     else:
@@ -77,7 +77,13 @@ def index():
         de['embed_code'] = derive_embedcode(e['url'])
         de['created_at'] = format_timestamp(e['created_at'])
         entries.append(de)
-    return render_template("index.html", entries=entries)
+    cur = db.execute('SELECT * FROM tags ORDER BY id DESC')
+    db_tags = cur.fetchall()
+    tags = []
+    for t in db_tags:
+        dt = dict(t)
+        tags.append(dt['name'])
+    return render_template("index.html", entries=entries, tags=tags)
 
 @app.route('/add', methods=['POST'])
 def add_entry():
@@ -91,12 +97,24 @@ def add_entry():
             return redirect(url_for('index'))
         url = urlparse(request.form['url'])
         if url.hostname == 'www.youtube.com':
-            db.execute(
+            cur = db.execute(
                 'INSERT INTO entries (title, url, artist, created_at, genre) VALUES (?, ?, ?, ?, ?)',
-                [request.form['title'], request.form['url'], 
+                [request.form['title'], request.form['url'],
                  request.form['artist'], time.time(), request.form['genre']])
             db.commit()
+            entry_id = cur.lastrowid
+            # adding tagging to the entry
+            if request.remote_addr in app.config['ALLOWED_IPS']:
+                # user can add new tags
+                for tag_name in request.form['tags'].split(','):
+                    db.execute('INSERT INTO tags (name, entry_id) VALUES (?, ?)',
+                               [tag_name, entry_id])
+                    db.commit()
+            else:
+                # user can only add existing tags
+                pass
         #flash('New entry was successfully posted')
+
     return redirect(url_for('index'))
 
 

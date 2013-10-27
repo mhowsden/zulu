@@ -2,13 +2,15 @@
   <head>
     <title>Music Videos</title>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="//xbias.com/s/jquery.sonar.min.js"></script>
+    <script type="text/javascript" src="//xbias.com/s/js/jquery.sonar.min.js"></script>
+    <link href="//xbias.com/s/css/select2.css" rel="stylesheet"/>
+    <script src="//xbias.com/s/js/select2.min.js"></script>
     <style type="text/css">
 body{
   background-color: #CCC;
   font-family: Ubuntu, Verdana;
 }
-ul{
+ul.entries{
   width: 600px;
 }
 li{
@@ -57,15 +59,20 @@ a:hover{
         </div>
       <div style="position: absolute; top: 15px; left: 185px;">
         <span>Genre</span>
-	<SELECT style="display: block;" tabindex="2" NAME="genre">
+	<select style="display: block;" tabindex="2" id="genre" name="genre">
 	  <OPTION>Hip Hop</OPTION>
 	  <OPTION>Funk</OPTION>
+	  <OPTION>Blues</OPTION>
 	  <OPTION>Other</OPTION>
-	</SELECT>
+	</select>
       </div>
         <div style="margin-top: 5px; padding-right: 0px;">
           <span>URL</span><br />
           <input style="width: 425px;" tabindex="4" type="text" name="url" />
+        </div>
+        <div style="margin-top: 10px;">
+          <span>Tags</span><br />
+          <input type="hidden" style="width: 425px; margin-top: 5px; font-size: 12px;" name="tags" id="tags" />
         </div>
         <div style="float: right; padding-top: 10px;">
           <input tabindex="5" type="submit" value="Add" />
@@ -96,6 +103,8 @@ $iframe.unbind("scrollin"); // clean up binding
 iframe.src = $iframe.attr( "data-src" );
 
 });
+$("#tags").select2({tags:{{ tags|safe }}, tokenSeparators: [","]});
+
 })(jQuery);
 </script>
   </body>
