@@ -1,7 +1,7 @@
 import time
 import json
 from datetime import datetime
-from flask import Flask, render_template, request, g, flash, redirect, url_for
+from flask import Flask, render_template, request, g, flash, redirect, url_for, abort
 from sqlite3 import dbapi2 as sqlite3
 from urlparse import urlparse, parse_qs
 
@@ -53,11 +53,33 @@ def format_timestamp(sqlite_date):
     else:
         return ""
 
+def get_songs(tag_name=None):
+    db = get_db()
+    if tag_name:
+        cur = db.execute('SELECT * FROM entries WHERE ID IN (SELECT entry_id FROM tags WHERE name=(?)) ORDER BY id DESC', [tag_name])
+    else:
+        cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
+    db_entries = cur.fetchall()
+    entries = []
+    for e in db_entries:
+        de = dict(e)
+        de['embed_code'] = derive_embedcode(e['url'])
+        de['created_at'] = format_timestamp(e['created_at'])
+        entries.append(de)
+    return entries
+
 @app.teardown_appcontext
 def close_db(error):
     """Closes the database again at the end of the request."""
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
+
+@app.route("/tag/<tag_name>")
+def tag(tag_name):
+    songs = get_songs(tag_name)
+    if not songs:
+        abort(404)
+    return render_template("tag.html", entries=songs, tags=[])
 
 @app.route("/")
 def index():
@@ -65,11 +87,11 @@ def index():
     # get all entries descending by creation date
     db = get_db()
     try:
-        cur = db.execute('select * from entries order by id desc')
+        cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
     except sqlite3.OperationalError:
         # this should only happen the first time the db is used
         init_db()
-        cur = db.execute('select * from entries order by id desc')
+        cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
     db_entries = cur.fetchall()
 
     entries = []
