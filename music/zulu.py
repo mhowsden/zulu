@@ -1,4 +1,5 @@
 import time
+import json
 from datetime import datetime
 from flask import Flask, render_template, request, g, flash, redirect, url_for
 from sqlite3 import dbapi2 as sqlite3
@@ -83,7 +84,7 @@ def index():
     for t in db_tags:
         dt = dict(t)
         tags.append(dt['name'])
-    return render_template("index.html", entries=entries, tags=tags)
+    return render_template("index.html", entries=entries, tags=json.dumps(tags))
 
 @app.route('/add', methods=['POST'])
 def add_entry():
