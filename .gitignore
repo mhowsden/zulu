@@ -1,13 +1,14 @@
-###
+######################
 # Project specific
-###
+######################
 
 run.bash
 config.zulu
+zulu.db
 
-###
+######################
 # Python
-###
+######################
 
 *.py[cod]
 
@@ -31,6 +32,7 @@ lib64
 __pycache__
 include
 .Python
+venv
 
 # Installer logs
 pip-log.txt
@@ -48,9 +50,9 @@ nosetests.xml
 .project
 .pydevproject
 
-###
+######################
 # Emacs
-###
+######################
 
 *~
 \#*\#
@@ -65,9 +67,9 @@ tramp
 .org-id-locations
 *_archive
 
-###
+######################
 # PyCharm
-###
+######################
 
 .idea
 .iml
