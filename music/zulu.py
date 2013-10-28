@@ -100,7 +100,7 @@ def index():
         de['embed_code'] = derive_embedcode(e['url'])
         de['created_at'] = format_timestamp(e['created_at'])
         entries.append(de)
-    cur = db.execute('SELECT * FROM tags ORDER BY id DESC')
+    cur = db.execute('SELECT DISTINCT name FROM tags ORDER BY id DESC')
     db_tags = cur.fetchall()
     tags = []
     for t in db_tags:
