@@ -4,6 +4,8 @@
 
 run.bash
 config.zulu
+zulu.db
+venv
 
 ###
 # Python
