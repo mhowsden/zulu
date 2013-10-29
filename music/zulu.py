@@ -1,6 +1,7 @@
 # built-in
 import time
 import json
+import logging
 from datetime import datetime
 from sqlite3 import dbapi2 as sqlite3
 from urlparse import urlparse, parse_qs
@@ -164,6 +165,6 @@ def add_entry():
 
 
 if __name__ == "__main__":
+    if 'LOG_FILE' in app.config:
+        logging.basicConfig(filename=app.config['LOG_FILE'], level=logging.INFO)
     app.run()
-
-
