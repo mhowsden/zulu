@@ -15,7 +15,8 @@ app = Flask(__name__)
 app.config.update(dict(
     DATABASE='/tmp/zulu.db'
 ))
-app.config.from_envvar('ZULU_SETTINGS', silent=True)
+#app.config.from_envvar('ZULU_SETTINGS', silent=True)
+app.config.from_pyfile('config.zulu')
 
 def connect_db():
     """Connects to the specific database."""
