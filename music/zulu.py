@@ -95,7 +95,7 @@ def index():
         cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
     except sqlite3.OperationalError:
         # this should only happen the first time the db is used
-        init_db()
+        # init_db() ### this should be moved outside the app
         cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
     db_entries = cur.fetchall()
 
