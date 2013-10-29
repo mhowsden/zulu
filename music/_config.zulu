@@ -1,2 +1,4 @@
 DATABASE="/path/to/zulu.db"
 ALLOWED_IPS=['10.0.0.1','192.168.0.1']
+SITE_URL='http://zulu.example.com'
+SECRET_HEADER='Something-Secret'
