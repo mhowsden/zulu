@@ -153,7 +153,7 @@ def add_entry():
                                    [tag_name, entry_id])
                         db.commit()
             # update the main list of videos with the secret header
-            # if it exists in the config file
+            # if it exists in the config file, this is for nginx
             if 'SECRET_HEADER' and 'SITE_URL' in app.config:
                 r = requests.get(app.config['SITE_URL'],
                                  headers={app.config['SECRET_HEADER']:1})
