@@ -1,9 +1,14 @@
+# built-in
 import time
 import json
+import logging
 from datetime import datetime
-from flask import Flask, render_template, request, g, flash, redirect, url_for, abort
 from sqlite3 import dbapi2 as sqlite3
 from urlparse import urlparse, parse_qs
+
+# third party
+from flask import Flask, render_template, request, g, flash, redirect, url_for, abort
+import requests
 
 app = Flask(__name__)
 
@@ -11,7 +16,8 @@ app = Flask(__name__)
 app.config.update(dict(
     DATABASE='/tmp/zulu.db'
 ))
-app.config.from_envvar('ZULU_SETTINGS', silent=True)
+#app.config.from_envvar('ZULU_SETTINGS', silent=True)
+app.config.from_pyfile('config.zulu')
 
 def connect_db():
     """Connects to the specific database."""
@@ -90,7 +96,7 @@ def index():
         cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
     except sqlite3.OperationalError:
         # this should only happen the first time the db is used
-        init_db()
+        # init_db() ### this should be moved outside the app
         cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
     db_entries = cur.fetchall()
 
@@ -146,12 +152,19 @@ def add_entry():
                         db.execute('INSERT INTO tags (name, entry_id) VALUES (?, ?)',
                                    [tag_name, entry_id])
                         db.commit()
+            # update the main list of videos with the secret header
+            # if it exists in the config file, this is for nginx
+            if 'SECRET_HEADER' and 'SITE_URL' in app.config:
+                r = requests.get(app.config['SITE_URL'],
+                                 headers={app.config['SECRET_HEADER']:1})
+                if r.status_code != requests.codes.ok:
+                    abort(500)
         #flash('New entry was successfully posted')
 
     return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
+    if 'LOG_FILE' in app.config:
+        logging.basicConfig(filename=app.config['LOG_FILE'], level=logging.INFO)
     app.run()
-
-

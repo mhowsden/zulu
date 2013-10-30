@@ -5,6 +5,7 @@
 run.bash
 config.zulu
 zulu.db
+venv
 
 ######################
 # Python
@@ -32,7 +33,6 @@ lib64
 __pycache__
 include
 .Python
-venv
 
 # Installer logs
 pip-log.txt
