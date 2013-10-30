@@ -159,6 +159,12 @@ def add_entry():
                                  headers={app.config['SECRET_HEADER']:1})
                 if r.status_code != requests.codes.ok:
                     abort(500)
+            if 'HIPCHAT_ROOM_ID' and 'HIPCHAT_ROOM_TOKEN' in app.config:
+                headers = {'content-type': 'application/json'}
+                params = {'auth_token':app.config['HIPCHAT_ROOM_TOKEN']}
+                payload = {'message':request.form['url'],'notify':True,'message_format':'text'}
+                r = requests.post('https://api.hipchat.com/v2/room/%s/message' % app.config['HIPCHAT_ROOM_ID'],
+                                  params=params,data=json.dumps(payload),headers=headers)
         #flash('New entry was successfully posted')
 
     return redirect(url_for('index'))
