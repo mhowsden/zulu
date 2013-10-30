@@ -1,0 +1,13 @@
+  <ul class="entries">
+  {% for entry in entries %}
+    <li>
+      <div style="margin-bottom: 5px; width: 560px;">
+        <div style="float: right; color #666; font-size: 12px;">posted {{ entry.created_at }}</div>
+        <a href="{{ entry.url }}">{{ entry.title }}</a> {{ entry.artist }}
+      </div>
+      {{ entry.embed_code|safe }}
+    </li>
+  {% else %}
+    <li><em></em></li>
+  {% endfor %}
+  </ul>

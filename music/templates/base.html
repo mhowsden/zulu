@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <title>Music, Video</title>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//xbias.com/s/js/jquery.sonar.min.js"></script>
+    <link href="//xbias.com/s/css/select2.css" rel="stylesheet"/>
+    <script src="//xbias.com/s/js/select2.min.js"></script>
+    <style type="text/css">
+body{
+  background-color: #9B9B9B;
+  font-family: Ubuntu, Verdana;
+}
+ul.entries{
+  width: 600px;
+}
+li{
+  list-style-type: none;
+  padding-bottom: 10px;
+}
+a{
+  text-decoration: none;
+  color: #262742;
+}
+a:hover{
+  text-decoration: underline;
+}
+
+#add-form {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 450px;
+  background-color: #1C1C1C;
+  color: #FFF;
+  padding: 15px;
+}
+
+#add-form span{
+  font-size: 13px;
+  padding-left: 5px;
+}
+
+#add-form div{
+  spadding-right: 59px;
+}
+
+    </style>
+  </head>
+  <body>
+    {% block body %}
+    {% block addForm %}
+    <div id="add-form">
+    <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
+      <div style="width: 180px; float: right;">
+        <span>Artist</span>
+        <input style="width: 155px;" tabindex="3" type="text" name="artist" />
+      </div>
+        <div style="padding-bottom: 10px; width: 180px;">
+          <span>Title</span>
+          <input style="width: 155px;" tabindex="1" type="text" name="title" />
+        </div>
+      <div style="position: absolute; top: 15px; left: 185px;">
+        <span>Genre</span>
+	<select style="display: block;" tabindex="2" id="genre" name="genre">
+	  <OPTION>Hip Hop</OPTION>
+	  <OPTION>Funk</OPTION>
+	  <OPTION>Blues</OPTION>
+	  <OPTION>Other</OPTION>
+	</select>
+      </div>
+        <div style="margin-top: 5px; padding-right: 0px;">
+          <span>URL</span><br />
+          <input style="width: 425px;" tabindex="4" type="text" name="url" />
+        </div>
+        <div style="margin-top: 10px;">
+          <span>Tags</span><br />
+          <input type="hidden" style="width: 425px; margin-top: 5px; font-size: 12px;" name="tags" id="tags" />
+        </div>
+        <div style="float: right; padding-top: 10px;">
+          <input tabindex="5" type="submit" value="Add" />
+        </div>
+    </form>
+    </div>
+    {% endblock %}
+  <ul class="entries">
+  {% for entry in entries %}
+    <li>
+      <div style="margin-bottom: 5px; width: 560px;">
+        <div style="float: right; color #666; font-size: 12px;">posted {{ entry.created_at }}</div>
+        <a href="{{ entry.url }}">{{ entry.title }}</a> {{ entry.artist }}
+      </div>
+      {{ entry.embed_code|safe }}
+    </li>
+  {% else %}
+    <li><em></em></li>
+  {% endfor %}
+  </ul>
+  {% endblock %}
+<script type="text/javascript">
+(function($){
+$("iframe").bind("scrollin", function(){
+
+var iframe = this,
+$iframe = $(iframe);
+
+$iframe.unbind("scrollin"); // clean up binding
+iframe.src = $iframe.attr( "data-src" );
+
+});
+$("#tags").select2({tags:{{ tags|safe }}, tokenSeparators: [","]});
+
+})(jQuery);
+</script>
+  </body>
+</html>
