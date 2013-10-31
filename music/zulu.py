@@ -85,7 +85,7 @@ def tag(tag_name):
     songs = get_songs(tag_name)
     if not songs:
         abort(404)
-    return render_template("tag.html", entries=songs, tags=[])
+    return render_template("tag.html", entries=songs, tag_list=[])
 
 @app.route("/")
 def index():
@@ -108,12 +108,11 @@ def index():
         entries.append(de)
     cur = db.execute('SELECT DISTINCT name, sum(CASE WHEN name=name THEN 1 END) as ncount FROM tags GROUP BY name')
     db_tags = cur.fetchall()
-    tags = {}; tags_list = []
+    tags = {}
     for t in db_tags:
-        tags[t[0]] = t[1]
-        tags_list.append(t[0])
+        tags[t[0]] = t[1] + 10
     return render_template("index.html", entries=entries, tags=tags,
-                           tags_list=json.dumps(tags_list))
+                           tag_list=json.dumps(tags.keys()))
 
 @app.route('/add', methods=['POST'])
 def add_entry():

@@ -62,7 +62,7 @@ $iframe.unbind("scrollin"); // clean up binding
 iframe.src = $iframe.attr( "data-src" );
 
 });
-$("#tags").select2({tags:{{ tags_list|safe }}, tokenSeparators: [","]});
+$("#tags").select2({tags:{{ tag_list|safe }}, tokenSeparators: [","]});
 
 })(jQuery);
 </script>
