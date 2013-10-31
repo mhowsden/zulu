@@ -4,28 +4,19 @@
     <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
       <div style="width: 180px; float: right;">
         <span>Artist</span>
-        <input style="width: 155px;" tabindex="3" type="text" name="artist" />
+        <input style="width: 155px;" tabindex="2" type="text" name="artist" />
       </div>
         <div style="padding-bottom: 10px; width: 180px;">
           <span>Title</span>
-          <input style="width: 155px;" tabindex="1" type="text" name="title" />
+          <input style="width: 240px;" tabindex="1" type="text" name="title" />
         </div>
-      <div style="position: absolute; top: 15px; left: 185px;">
-        <span>Genre</span>
-	<select style="display: block;" tabindex="2" id="genre" name="genre">
-	  <OPTION>Hip Hop</OPTION>
-	  <OPTION>Funk</OPTION>
-	  <OPTION>Blues</OPTION>
-	  <OPTION>Other</OPTION>
-	</select>
-      </div>
         <div style="margin-top: 5px; padding-right: 0px;">
           <span>URL</span><br />
-          <input style="width: 425px;" tabindex="4" type="text" name="url" />
+          <input style="width: 425px;" tabindex="3" type="text" name="url" />
         </div>
         <div style="margin-top: 10px;">
           <span>Tags</span><br />
-          <input type="hidden" style="width: 425px; margin-top: 5px; font-size: 12px;" name="tags" id="tags" />
+          <input type="hidden" tabindex="4" style="width: 425px; margin-top: 5px; font-size: 12px;" name="tags" id="tags" />
         </div>
         <div style="float: right; padding-top: 10px;">
           <input tabindex="5" type="submit" value="Add" />

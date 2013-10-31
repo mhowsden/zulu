@@ -127,9 +127,9 @@ def add_entry():
         url = urlparse(request.form['url'])
         if url.hostname == 'www.youtube.com':
             cur = db.execute(
-                'INSERT INTO entries (title, url, artist, created_at, genre) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO entries (title, url, artist, created_at) VALUES (?, ?, ?, ?)',
                 [request.form['title'], request.form['url'],
-                 request.form['artist'], time.time(), request.form['genre']])
+                 request.form['artist'], time.time()])
             db.commit()
             entry_id = cur.lastrowid
             # adding tagging to the entry, using crappy ip based validation
@@ -138,7 +138,7 @@ def add_entry():
                 ip = request.remote_addr
             else:
                 ip = request.headers.getlist("X-Real-IP")[0]
-            if ip in app.config['ALLOWED_IPS']:
+            if 'ALLOWED_IPS' in app.config and ip in app.config['ALLOWED_IPS']:
                 # user can add new tags
                 for tag_name in request.form['tags'].split(','):
                     db.execute('INSERT INTO tags (name, entry_id) VALUES (?, ?)',
