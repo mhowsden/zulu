@@ -106,13 +106,14 @@ def index():
         de['embed_code'] = derive_embedcode(e['url'])
         de['created_at'] = format_timestamp(e['created_at'])
         entries.append(de)
-    cur = db.execute('SELECT DISTINCT name FROM tags ORDER BY id DESC')
+    cur = db.execute('SELECT DISTINCT name, sum(CASE WHEN name=name THEN 1 END) as ncount FROM tags GROUP BY name')
     db_tags = cur.fetchall()
-    tags = []
+    tags = {}; tags_list = []
     for t in db_tags:
-        dt = dict(t)
-        tags.append(dt['name'])
-    return render_template("index.html", entries=entries, tags=json.dumps(tags))
+        tags[t[0]] = t[1]
+        tags_list.append(t[0])
+    return render_template("index.html", entries=entries, tags=tags,
+                           tags_list=json.dumps(tags_list))
 
 @app.route('/add', methods=['POST'])
 def add_entry():
@@ -133,6 +134,7 @@ def add_entry():
             db.commit()
             entry_id = cur.lastrowid
             # adding tagging to the entry, using crappy ip based validation
+            # this is for the nginx proxied case, could be spoofed
             if not request.headers.getlist("X-Real-IP"):
                 ip = request.remote_addr
             else:
