@@ -24,10 +24,12 @@
     </form>
     </div>
     {% if tags %}
-    <div style="margin-left: 45px;">
+    <div class="g">
+    <div id="tag-cloud">
       {% for tag in tags.keys() %}
       <a style="font-size: {{ tags[tag] }}px;" href="/tag/{{ tag }}">{{ tag }}</a>
       {% endfor %}
+    </div>
     </div>
     {% endif %}
     {% include "entries.html" %}
