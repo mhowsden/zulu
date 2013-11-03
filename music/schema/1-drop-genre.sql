@@ -6,6 +6,6 @@ CREATE TABLE entries_new (
   url text not null,
   created_at integer);
 
-INSERT INTO entries_new (title, artist, url, created_at) SELECT title, artist, url, created_at FROM entries;
+INSERT INTO entries_new (id, title, artist, url, created_at) SELECT id, title, artist, url, created_at FROM entries;
 DROP TABLE entries;
 ALTER TABLE entries_new RENAME TO entries;
