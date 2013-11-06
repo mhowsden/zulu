@@ -49,13 +49,15 @@ def derive_embedcode(url):
         embed_code = """<iframe width="560" height="315"
         data-src="//www.youtube.com/embed/%s" frameborder="0"
          allowfullscreen></iframe>"""
+        return embed_code % video_id
     elif parsed.hostname.endswith('bandcamp.com') and 'embed_id' in query_dict:
         video_id = query_dict['embed_id'][0]
+        track_id = query_dict['track_id'][0]
         embed_code = """<iframe style="border: 0; width: 350px; height: 470px;"
-        data-src="http://bandcamp.com/EmbeddedPlayer/album=%s/size=large/bgcol=333333/linkcol=e99708/notracklist=true/t=2/transparent=true/" seamless></iframe>"""
+        data-src="http://bandcamp.com/EmbeddedPlayer/album=%s/size=large/bgcol=333333/linkcol=e99708/notracklist=true/t=%s/transparent=true/" seamless></iframe>"""
+        return embed_code % (video_id, track_id)
     else:
         return ""
-    return embed_code % video_id
 
 def derive_bandcamp_url(url):
     r = requests.get(url)
@@ -63,8 +65,10 @@ def derive_bandcamp_url(url):
         c = r.content
         # parsing for embed code id
         block_start = c.find('tralbum_param')
-        embed_id = c[block_start:block_start+100].split('value : ')[1].split(' }')[0]
-        return urlparse("%s?embed_id=%s" % (url, embed_id))
+        blob = c[block_start:block_start+200]
+        embed_id = blob.split('value : ')[1].split(' }')[0]
+        track_id = blob.split('t : ')[1].split(',\n')[0]
+        return urlparse("%s?embed_id=%s&track_id=%s" % (url, embed_id, track_id))
     else:
         return None
 
