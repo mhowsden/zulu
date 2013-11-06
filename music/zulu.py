@@ -65,7 +65,7 @@ def derive_bandcamp_url(url):
         c = r.content
         # parsing for embed code id
         block_start = c.find('tralbum_param')
-        blob = c[block_start:block_start+200]
+        blob = c[block_start:block_start+300]
         embed_id = blob.split('value : ')[1].split(' }')[0]
         track_id = blob.split('t : ')[1].split(',\n')[0]
         return urlparse("%s?embed_id=%s&track_id=%s" % (url, embed_id, track_id))
