@@ -44,14 +44,30 @@ def get_db():
 def derive_embedcode(url):
     parsed = urlparse(url)
     query_dict = parse_qs(parsed.query)
-    if 'v' in query_dict:
-        youtube_id = query_dict['v'][0]
+    if parsed.hostname == "www.youtube.com" and 'v' in query_dict:
+        video_id = query_dict['v'][0]
         embed_code = """<iframe width="560" height="315"
         data-src="//www.youtube.com/embed/%s" frameborder="0"
          allowfullscreen></iframe>"""
+    elif parsed.hostname.endswith('bandcamp.com') and 'embed_id' in query_dict:
+        video_id = query_dict['embed_id'][0]
+        embed_code = """<iframe style="border: 0; width: 350px; height: 470px;"
+        data-src="http://bandcamp.com/EmbeddedPlayer/album=%s/size=large/bgcol=333333/linkcol=e99708/notracklist=true/t=2/transparent=true/" seamless></iframe>"""
     else:
-        embed_code = None
-    return embed_code % youtube_id
+        return ""
+    return embed_code % video_id
+
+def derive_bandcamp_url(url):
+    r = requests.get(url)
+    if r.ok:
+        c = r.content
+        # parsing for embed code id
+        block_start = c.find('tralbum_param')
+        embed_id = c[block_start:block_start+100].split('value : ')[1].split(' }')[0]
+        return urlparse("%s?embed_id=%s" % (url, embed_id))
+    else:
+        return None
+
 
 def format_timestamp(sqlite_date):
     if sqlite_date:
@@ -103,6 +119,9 @@ def index():
     entries = []
     for e in db_entries:
         de = dict(e)
+        # stripping GET params for bandcamp urls
+        if urlparse(e['url']).hostname.endswith('bandcamp.com'):
+            de['url'] = e['url'].split('?')[0]
         de['embed_code'] = derive_embedcode(e['url'])
         de['created_at'] = format_timestamp(e['created_at'])
         entries.append(de)
@@ -125,10 +144,15 @@ def add_entry():
         if len(db_entries) > 0:
             return redirect(url_for('index'))
         url = urlparse(request.form['url'])
-        if url.hostname == 'www.youtube.com':
+        if url.hostname == 'www.youtube.com' or url.hostname.endswith('bandcamp.com'):
+            # validating bandcamp url
+            if url.hostname.endswith('bandcamp.com'):
+                url = derive_bandcamp_url(url.geturl())
+                if not url:
+                    return redirect(url_for('index'))
             cur = db.execute(
                 'INSERT INTO entries (title, url, artist, created_at) VALUES (?, ?, ?, ?)',
-                [request.form['title'], request.form['url'],
+                [request.form['title'], url.geturl(),
                  request.form['artist'], time.time()])
             db.commit()
             entry_id = cur.lastrowid
