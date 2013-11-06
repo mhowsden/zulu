@@ -139,15 +139,15 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    # validating the url is from youtube before allowing anything to be submitted
-    if request.form.has_key('url'):
+    # validating the url before allowing anything to be submitted
+    url = urlparse(request.form['url'])
+    if url.hostname:
         db = get_db()
         # check to see if the url has been posted yet
         cur = db.execute('SELECT * FROM entries WHERE url = ?', [request.form['url']])
         db_entries = cur.fetchall()
         if len(db_entries) > 0:
             return redirect(url_for('index'))
-        url = urlparse(request.form['url'])
         if url.hostname == 'www.youtube.com' or url.hostname.endswith('bandcamp.com'):
             # validating bandcamp url
             if url.hostname.endswith('bandcamp.com'):
