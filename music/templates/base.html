@@ -7,33 +7,66 @@
     <link href="//xbias.com/s/css/select2.css" rel="stylesheet"/>
     <script src="//xbias.com/s/js/select2.min.js"></script>
     <style type="text/css">
+
 body{
   background-color: #9B9B9B;
   font-family: Ubuntu, Verdana;
 }
+
 ul.entries{
   width: 600px;
 }
+
 li{
   list-style-type: none;
   padding-bottom: 10px;
 }
+
 a{
   text-decoration: none;
   color: #262742;
 }
+
 a:hover{
   text-decoration: underline;
 }
 
+#add-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 25pt;
+  background-color: #1C1C1C;
+  color: #FFF;
+  vertical-align: middle;
+  padding: 5px 10px 10px 10px;
+  cursor: hand;
+  z-index: 2;
+}
+
+#close-button {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  font-weight: bolder;
+  font-size: 10pt;
+  background-color: #1C1C1C;
+  color: #FFF;
+  cursor: hand;
+  display: none;
+  z-index: 3;
+}
+
 #add-form {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   width: 450px;
   background-color: #1C1C1C;
   color: #FFF;
   padding: 15px;
+  display: none;
+  z-index: 1;
 }
 
 #add-form span{
@@ -47,15 +80,20 @@ a:hover{
 
 #tag-cloud{
   width: 100%;
+  text-align: right;
+  line-height: 25px;
+  margin-right: 20px;
 }
 #tag-cloud a{
   padding: 5px;
+  vertical-align: middle;
 }
 .g {
   background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0.10, rgb(155,155,155)), color-stop(0.90, rgb(204,204,204)));
   background-image: -moz-linear-gradient(center bottom, rgb(155,155,155) 10%, rgb(204,204,204) 90% );
   padding-bottom: 5px;
-  width: 560px;
+  padding-right: 10px;
+  width: 550px;
   margin-left: 40px;
 }
 
@@ -77,6 +115,17 @@ iframe.src = $iframe.attr( "data-src" );
 
 });
 $("#tags").select2({tags:{{ tag_list|safe }}, tokenSeparators: [","]});
+
+$("#add-button").click(function(){
+  $("#add-button").hide();
+  $("#add-form").show();
+  $("#close-button").show();
+});
+$("#close-button").click(function(){
+  $("#close-button").hide();
+  $("#add-form").hide();
+  $("#add-button").show();
+});
 
 })(jQuery);
 </script>
