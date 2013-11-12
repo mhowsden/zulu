@@ -192,7 +192,7 @@ def add_entry():
                 headers = {'content-type': 'application/json'}
                 params = {'auth_token':app.config['HIPCHAT_ROOM_TOKEN']}
                 payload = {'message':request.form['url'],'notify':True,'message_format':'text'}
-                r = requests.post('https://api.hipchat.com/v2/room/%s/message' % app.config['HIPCHAT_ROOM_ID'],
+                r = requests.post('https://api.hipchat.com/v2/room/%s/notification' % app.config['HIPCHAT_ROOM_ID'],
                                   params=params,data=json.dumps(payload),headers=headers)
         #flash('New entry was successfully posted')
 
