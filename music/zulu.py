@@ -56,6 +56,10 @@ def derive_embedcode(url):
         embed_code = """<iframe style="border: 0; width: 350px; height: 470px;"
         data-src="http://bandcamp.com/EmbeddedPlayer/album=%s/size=large/bgcol=333333/linkcol=e99708/notracklist=true/t=%s/transparent=true/" seamless></iframe>"""
         return embed_code % (video_id, track_id)
+    elif parsed.hostname.endswith('soundcloud.com'):
+        embed_code = '<iframe width="100%%" height="166" scrolling="no" frameborder="no" data-src="%s"></iframe>'
+        print parsed.geturl()
+        return embed_code % parsed.geturl()
     else:
         return ""
 
@@ -69,6 +73,13 @@ def derive_bandcamp_url(url):
         embed_id = blob.split('value : ')[1].split(' }')[0]
         track_id = blob.split('t : ')[1].split(',\n')[0]
         return urlparse("%s?embed_id=%s&track_id=%s" % (url, embed_id, track_id))
+    else:
+        return None
+
+def derive_soundcloud_url(url):
+    r = requests.get("http://soundcloud.com/oembed/?format=json&url=%s" % url)
+    if r.ok:
+        return urlparse(j['html'].split("src=\"")[1].split('"></iframe>')[0])
     else:
         return None
 
@@ -148,10 +159,16 @@ def add_entry():
         db_entries = cur.fetchall()
         if len(db_entries) > 0:
             return redirect(url_for('index'))
-        if url.hostname == 'www.youtube.com' or url.hostname.endswith('bandcamp.com'):
+        if url.hostname == 'www.youtube.com' or url.hostname.endswith('bandcamp.com') or \
+                url.hostname.endswith('soundcloud.com'):
             # validating bandcamp url
             if url.hostname.endswith('bandcamp.com'):
                 url = derive_bandcamp_url(url.geturl())
+                if not url:
+                    return redirect(url_for('index'))
+            # validating soundcloud url
+            if url.hostname.endswith('soundcloud.com'):
+                url = derive_soundcloud_url(url.geturl())
                 if not url:
                     return redirect(url_for('index'))
             cur = db.execute(
