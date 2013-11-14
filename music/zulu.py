@@ -79,6 +79,7 @@ def derive_bandcamp_url(url):
 def derive_soundcloud_url(url):
     r = requests.get("http://soundcloud.com/oembed/?format=json&url=%s" % url)
     if r.ok:
+        j = r.json()
         return urlparse(j['html'].split("src=\"")[1].split('"></iframe>')[0])
     else:
         return None
