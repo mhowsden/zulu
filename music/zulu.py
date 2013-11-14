@@ -58,7 +58,6 @@ def derive_embedcode(url):
         return embed_code % (video_id, track_id)
     elif parsed.hostname.endswith('soundcloud.com'):
         embed_code = '<iframe width="100%%" height="166" scrolling="no" frameborder="no" data-src="%s"></iframe>'
-        print parsed.geturl()
         return embed_code % parsed.geturl()
     else:
         return ""
