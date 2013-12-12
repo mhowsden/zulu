@@ -144,10 +144,11 @@ def index():
     db_tags = cur.fetchall()
     tags = {}
     for t in db_tags:
+        # this bit of logic makes tags in the cloud grow more slowly once they hit a threshold (10)
         if t[1] < 10:
             tags[t[0]] = t[1] + 10
         else:
-            tags[t[0]] = t[1] / 2 + 10
+            tags[t[0]] = t[1] / 4. + 17
     return render_template("index.html", entries=entries, tags=tags,
                            tag_list=json.dumps(tags.keys()))
 
