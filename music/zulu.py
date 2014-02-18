@@ -41,6 +41,11 @@ def get_db():
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
+def derive_youtube_id(url):
+    parsed = urlparse(url)
+    query_dict = parse_qs(parsed.query)
+    return query_dict['v'][0]
+
 def derive_embedcode(url):
     parsed = urlparse(url)
     query_dict = parse_qs(parsed.query)
@@ -101,6 +106,8 @@ def get_songs(tag_name=None):
     for e in db_entries:
         de = dict(e)
         de['embed_code'] = derive_embedcode(e['url'])
+        if urlparse(e['url']).hostname == "www.youtube.com":
+            de['youtube_id'] = derive_youtube_id(e['url'])
         de['created_at'] = format_timestamp(e['created_at'])
         entries.append(de)
     return entries
@@ -116,7 +123,12 @@ def tag(tag_name):
     songs = get_songs(tag_name)
     if not songs:
         abort(404)
-    return render_template("tag.html", entries=songs, tag_list=[])
+    youtube_list = []
+    for s in songs:
+        if 'youtube_id' in s:
+            youtube_list.append(s['youtube_id'])
+
+    return render_template("tag.html", entries=songs, tag_list=[], youtube_list=json.dumps(youtube_list))
 
 @app.route("/")
 def index():

@@ -129,5 +129,58 @@ $("#close-button").click(function(){
 
 })(jQuery);
 </script>
+
+<div id="hidden_player" style="display: none;"></div>
+<script>
+var youtube_list = {{youtube_list|safe}};
+
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+       player = new YT.Player('hidden_player', {
+          height: '200',
+          width: '300',
+          videoId: '4uTswXRH3-A',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        iframe = player.getIframe();
+        iframe.style.position = 'absolute';
+        iframe.width = window.innerWidth;
+        iframe.height = window.innerHeight;
+        iframe.style.top = iframe.style.left = 0;
+        player.cuePlaylist(youtube_list);
+      }
+     // 5. The API calls this function when the player's state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      var done = false;
+      function onPlayerStateChange(event) {
+        if(event.data == YT.PlayerState.ENDED){
+          // player2.playVideo();
+        // instead of playing the next iframe, a new vid can just be loaded
+        // into the current player with the code below
+        // player.loadVideoById('4uTswXRH3-A')
+        }
+      }
+      function stopVideo() {
+        player.stopVideo();
+      }
+
+</script>
   </body>
 </html>
