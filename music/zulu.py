@@ -105,6 +105,9 @@ def get_songs(tag_name=None):
     entries = []
     for e in db_entries:
         de = dict(e)
+        # stripping GET params for bandcamp urls
+        if urlparse(e['url']).hostname.endswith('bandcamp.com'):
+            de['url'] = e['url'].split('?')[0]
         de['embed_code'] = derive_embedcode(e['url'])
         if urlparse(e['url']).hostname == "www.youtube.com":
             de['youtube_id'] = derive_youtube_id(e['url'])
@@ -132,26 +135,12 @@ def tag(tag_name):
 
 @app.route("/")
 def index():
-    # query the database for all entries
-    # get all entries descending by creation date
+    songs = get_songs()
+    youtube_list = []
+    for s in songs:
+        if 'youtube_id' in s:
+            youtube_list.append(s['youtube_id'])
     db = get_db()
-    try:
-        cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
-    except sqlite3.OperationalError:
-        # this should only happen the first time the db is used
-        # init_db() ### this should be moved outside the app
-        cur = db.execute('SELECT * FROM entries ORDER BY id DESC')
-    db_entries = cur.fetchall()
-
-    entries = []
-    for e in db_entries:
-        de = dict(e)
-        # stripping GET params for bandcamp urls
-        if urlparse(e['url']).hostname.endswith('bandcamp.com'):
-            de['url'] = e['url'].split('?')[0]
-        de['embed_code'] = derive_embedcode(e['url'])
-        de['created_at'] = format_timestamp(e['created_at'])
-        entries.append(de)
     cur = db.execute('SELECT DISTINCT name, sum(CASE WHEN name=name THEN 1 END) as ncount FROM tags GROUP BY name')
     db_tags = cur.fetchall()
     tags = {}
@@ -161,8 +150,8 @@ def index():
             tags[t[0]] = t[1] + 10
         else:
             tags[t[0]] = t[1] / 4. + 17
-    return render_template("index.html", entries=entries, tags=tags,
-                           tag_list=json.dumps(tags.keys()))
+    return render_template("index.html", entries=songs, tags=tags,
+                           tag_list=json.dumps(tags.keys()), youtube_list=json.dumps(youtube_list))
 
 @app.route('/add', methods=['POST'])
 def add_entry():
