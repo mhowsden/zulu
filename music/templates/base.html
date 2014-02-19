@@ -180,7 +180,7 @@ var youtube_list = {{youtube_list|safe}};
       function onPlayerReady(event) {
         iframe = player.getIframe();
         iframe.style.position = 'absolute';
-        iframe.width = window.innerWidth;
+        iframe.width = $('body').innerWidth();
         iframe.height = window.innerHeight;
         iframe.style.top = iframe.style.left = 0;
         player.cuePlaylist(youtube_list);
