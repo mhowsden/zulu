@@ -144,6 +144,7 @@ $("#play-button").click(function(){
   $("#hidden_player").show();
   $("#play-button").hide();
   $("#close-playlist-button").show();
+  player.cuePlaylist(youtube_list);
   player.playVideo();
 });
 $("#close-playlist-button").click(function(){
