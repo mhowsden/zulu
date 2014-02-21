@@ -130,7 +130,7 @@ a:hover{
 
 <script type="text/javascript">
 (function($){
-$("iframe").bind("scrollin", function(){
+$("iframe").bind("scrollin", { distance: 500 }, function(){
 
 var iframe = this,
 $iframe = $(iframe);
