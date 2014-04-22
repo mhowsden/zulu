@@ -1,10 +1,9 @@
-ball-of-snakes
-==============
+Zulu
+====
 
-What is this man?  A heap of diseases, which, through his spirit, reach out into the world:
-there they want to catch their prey.
+*A minimalistic integrative music site*
 
-What is this man?  A ball of wild snakes, which rarely enjoy rest from each other: so they
-go forth singly and seek prey in the world.
+This was loosely based on flaskr (https://github.com/mitsuhiko/flask/tree/master/examples/flaskr) originally.
 
-*-Zarathustra*
+To use this you'll need to edit _run.bash and _config.zulu and rename them to run.bash and config.zulu.
+
