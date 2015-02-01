@@ -51,7 +51,7 @@ def derive_embedcode(url):
     query_dict = parse_qs(parsed.query)
     if parsed.hostname == "www.youtube.com" and 'v' in query_dict:
         video_id = query_dict['v'][0]
-        embed_code = """<iframe width="600" height="338"
+        embed_code = """<iframe style="width: 95%%; max-width: 600px; height: 338px;"
         data-src="//www.youtube.com/embed/%s" frameborder="0"
          allowfullscreen></iframe>"""
         return embed_code % video_id
