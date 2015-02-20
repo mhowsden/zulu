@@ -216,7 +216,10 @@ def add_entry():
                 payload = {'message':request.form['url'],'notify':True,'message_format':'text'}
                 r = requests.post('https://api.hipchat.com/v2/room/%s/notification' % app.config['HIPCHAT_ROOM_ID'],
                                   params=params,data=json.dumps(payload),headers=headers)
-        #flash('New entry was successfully posted')
+            if 'SLACKBOT_URL' in app.config:
+                slack_url = app.config['SLACKBOT_URL']
+                r = requests.post(slack_url,data="zulu: %s" % request.form['url'])
+
 
     return redirect(url_for('index'))
 
