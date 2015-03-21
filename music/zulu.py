@@ -146,10 +146,12 @@ def index():
     tags = {}
     for t in db_tags:
         # this bit of logic makes tags in the cloud grow more slowly once they hit a threshold (10)
+        # it also sets a max of 40 px
         if t[1] < 10:
             tags[t[0]] = t[1] + 10
         else:
-            tags[t[0]] = t[1] / 4. + 17
+            tags[t[0]] = min(t[1] / 4. + 17, 40)
+
     return render_template("index.html", entries=songs, tags=tags,
                            tag_list=json.dumps(tags.keys()), youtube_list=json.dumps(youtube_list))
 
